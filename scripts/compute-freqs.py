@@ -94,7 +94,7 @@ def callback(result):
 
     with h5py.File(cache_file) as f:
         f['freqs'][i] = freqs
-        
+
 
 def main(pool):
     logger.debug('Starting...')
@@ -114,7 +114,7 @@ def main(pool):
         with h5py.File(cache_file, 'w') as f:
             f.create_dataset('freqs', shape=(w0.shape[0], 3), dtype='f8')
 
-    tasks = [(i, w0[i]) for i in range(w0.shape[0])][:4] # HACK
+    tasks = [(i, w0[i]) for i in range(w0.shape[0])]
     for r in pool.map(worker, tasks, callback=callback):
         pass
 
