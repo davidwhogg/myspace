@@ -65,7 +65,7 @@ def worker(task):
     i, w0 = task
     w0 = gd.PhaseSpacePosition.from_w(w0, galactic)
 
-    logging.log(logging.DEBUG, 'Starting orbit {0}'.format(i))
+    # logging.debug('Starting orbit {0}'.format(i))
 
     try:
         orbit = H.integrate_orbit(w0, dt=0.5*u.Myr, t1=0*u.Myr,
