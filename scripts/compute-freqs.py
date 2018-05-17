@@ -1,6 +1,7 @@
 # Standard library
 import logging
 from os import path
+import sys
 
 # Third-party
 import astropy.coordinates as coord
@@ -117,6 +118,9 @@ def main(pool):
     tasks = [(i, w0[i]) for i in range(w0.shape[0])]
     for r in pool.map(worker, tasks, callback=callback):
         pass
+
+    pool.close()
+    sys.exit(0)
 
 
 if __name__ == "__main__":
