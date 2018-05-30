@@ -213,19 +213,30 @@ if __name__ == "__main__":
     from argparse import ArgumentParser
     parser = ArgumentParser(description="")
 
-    logger.setLevel(logging.DEBUG)
-
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--ncores", dest="n_cores", default=1,
                        type=int, help="Number of processes (uses multiprocessing).")
     group.add_argument("--mpi", dest="mpi", default=False,
                        action="store_true", help="Run with MPI.")
 
+    groupvq = parser.add_mutually_exclusive_group()
+    groupvq.add_argument("-v", dest="verbose", default=False,
+                         action="store_true", help="Verbose mode.")
+    groupvq.add_argument("-q", dest="quiet", default=False,
+                         action="store_true", help="Quiet mode.")
+
     parser.add_argument("-f", "--file", dest="source_file", required=True)
     parser.add_argument("-o", "--overwrite", dest="overwrite",
                         action="store_true", default=False)
 
     args = parser.parse_args()
+
+    if args.verbose:
+        logger.setLevel(logging.DEBUG)
+    elif args.quiet:
+        logger.setLevel(logging.WARNING)
+    else:
+        logger.setLevel(logging.INFO)
 
     basename = path.splitext(path.basename(args.source_file))[0]
     cache_file = path.join('../cache/{0}-orbits.hdf5'.format(basename))
