@@ -146,6 +146,7 @@ def callback(result):
         for k in data.keys():
             if hasattr(data[k], 'unit') and 'unit' not in f[k].attrs:
                 f[k].attrs['unit'] = str(data[k].unit)
+                f[k][i] = data[k].value
 
             else:
                 f[k][i] = data[k]
