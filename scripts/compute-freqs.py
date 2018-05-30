@@ -152,7 +152,7 @@ def callback(result):
                 f[k][i] = data[k]
 
 
-def main(pool, source_file):
+def main(pool, source_file, overwrite=False):
     logger.debug('Starting file {0}...'.format(source_file))
     logger.debug('Writing to cache file {0}'.format(cache_file))
 
@@ -167,7 +167,7 @@ def main(pool, source_file):
     w0 = w0.w(galactic).T
 
     # Make sure output file exists
-    if not path.exists(cache_file):
+    if not path.exists(cache_file) or overwrite:
         with h5py.File(cache_file, 'w') as f:
             f.create_dataset('sf_freqs', shape=(w0.shape[0], 3),
                              dtype='f8', fillvalue=np.nan)
@@ -188,7 +188,19 @@ def main(pool, source_file):
             f.create_dataset('Lz', shape=(w0.shape[0], ),
                              dtype='f8', fillvalue=np.nan)
 
-    tasks = [(i, w0[i]) for i in range(w0.shape[0])]
+        todo_idx = np.arange(w0.shape[0])
+
+    # If path exists, see what indices are not already done
+    else:
+        with h5py.File(cache_file, 'r') as f:
+            i1 = np.all(np.isnan(f['freqs'][:]), axis=1)
+            i2 = np.all(np.isnan(f['sf_freqs'][:]), axis=1)
+            i3 = np.isnan(f['zmax'][:])
+            todo_idx, = np.where(i1 | i2 | i3)
+
+    logger.info("{0} left to process".format(len(todo_idx)))
+
+    tasks = [(i, w0[i]) for i in todo_idx]
     for r in pool.map(worker, tasks, callback=callback):
         pass
 
@@ -210,6 +222,8 @@ if __name__ == "__main__":
                        action="store_true", help="Run with MPI.")
 
     parser.add_argument("-f", "--file", dest="source_file", required=True)
+    parser.add_argument("-o", "--overwrite", dest="overwrite",
+                        action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -217,4 +231,4 @@ if __name__ == "__main__":
     cache_file = path.join('../cache/{0}-orbits.hdf5'.format(basename))
 
     pool = schwimmbad.choose_pool(mpi=args.mpi, processes=args.n_cores)
-    main(pool, args.source_file)
+    main(pool, args.source_file, overwrite=args.overwrite)
