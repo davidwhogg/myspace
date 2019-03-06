@@ -1,0 +1,164 @@
+% This file is part of the myspace project.
+% Copyright 2019 the authors. All rights reserved.
+
+% TODO:
+% -
+
+\documentclass[modern]{aastex62}
+
+\usepackage{amsmath}
+
+% typography
+\setlength{\parindent}{1.\baselineskip}
+\input{preamble}
+
+% aastex parameters
+% \received{not yet; THIS IS A DRAFT}
+%\revised{not yet}
+%\accepted{not yet}
+% % Adds "Submitted to " the arguement.
+% \submitjournal{ApJ}
+\shorttitle{TODO}
+\shortauthors{Price-Whelan \& Hogg}
+
+\begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
+
+\title{myspace}
+
+\author[0000-0003-0872-7098]{Adrian~M.~Price-Whelan}
+\affiliation{Department of Astrophysical Sciences,
+             Princeton University, Princeton, NJ 08544, USA}
+\email{adrn@astro.princeton.edu}
+\correspondingauthor{Adrian M. Price-Whelan}
+
+\author[0000-0003-2866-9403]{David~W.~Hogg}
+\affiliation{Max-Planck-Institut f\"ur Astronomie,
+             K\"onigstuhl 17, D-69117 Heidelberg, Germany}
+\affiliation{Center for Cosmology and Particle Physics,
+             Department of Physics,
+             New York University, 726 Broadway,
+             New York, NY 10003, USA}
+\affiliation{Center for Data Science,
+             New York University, 60 Fifth Ave,
+             New York, NY 10011, USA}
+\affiliation{Flatiron Institute,
+             Simons Foundation,
+             162 Fifth Avenue,
+             New York, NY 10010, USA}
+
+\begin{abstract}\noindent % trust me
+Action-space is \textsl{over}.
+\end{abstract}
+
+\keywords{Galaxy: kinematics and dynamics}
+
+\section{Introduction}
+\label{sec:intro}
+
+Suh.
+
+\section{Data}
+\label{sec:data}
+
+We use astrometric data from the \gaia\ mission (\citealt{Prusti:2016}), data
+release 2 (\citealt{Gaia-Collaboration:2018, Lindegren:2018}).
+
+% \begin{figure}
+% \begin{center}
+% \includegraphics[width=\textwidth]{gd1_sample.pdf}
+% \end{center}
+% \caption{
+% On-sky positions of likely GD-1 members in the GD-1 coordinate system.
+% GD-1 is apparent as an overdensity in negative proper motions (top right panel,
+% orange box), so selecting on proper motion already reveals the stream in
+% positions of individual stars (top left).
+% The stream also stands out in the color-magnitude diagram (bottom right) as
+% older and more metal poor than the background.
+% Selecting the main sequence of GD-1 (orange, shaded region in bottom right)
+% along with proper motion cuts unveils the stream in unprecedented detail (bottom
+% left).
+% }
+% \label{fig:selection}
+% \end{figure}
+
+\section{Methods}
+\label{sec:methods}
+
+\begin{equation}
+    v_i = v_{i, {\rm obs}} + A_{ij}\,x_j +
+        B_{ijk}\,x_j\,v_k + C_{ijk}\,x_j\,x_k +
+        D_{ijkm}\,x_j\,x_k\,v_m + F_{ijkm}\,x_j\,v_k\,v_m +
+        G_{ijkm}\,x_j\,x_k\,x_m +
+        ...
+\end{equation}
+where $C$ is symmetric in $j, k$, $D$ is symmetric in $j, k$, $F$ is symmetric
+in $k, m$, and $G$ is symmetric in $j, k, m$.
+I count: 9 + 27 + 18 + 54 + 54 + 30 parameters?
+
+\section{Results}
+\label{sec:results}
+
+Huh.
+
+\section{Discussion}
+\label{sec:discussion}
+
+Wuh?
+
+
+\acknowledgements{
+It is a pleasure to thank
+Kathryn V. Johnston,
+Robyn Sanderson,
+Lauren Anderson,
+and David N. Spergel for useful discussions and feedback.
+
+This work has made use of data from the European Space Agency (ESA) mission {\it
+Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia} Data
+Processing and Analysis Consortium (DPAC,
+\url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement.
+
+% KITP shit:
+This work was ... KITP...
+This research was supported in part by the National Science Foundation under
+Grant No. NSF PHY-1748958.
+}
+
+\software{
+    \package{Astropy} \citep{astropy, astropy:2018},
+    % \package{dustmaps}\footnote{\url{https://github.com/gregreen/dustmaps}},
+    \package{gala} \citep{gala},
+    \package{IPython} \citep{ipython},
+    \package{matplotlib} \citep{mpl},
+    \package{numpy} \citep{numpy},
+    \package{scipy} \citep{scipy}
+}
+
+\bibliographystyle{aasjournal}
+\bibliography{myspace}
+
+% \clearpage
+
+% \appendix
+% \section{Completeness and the \gaia\ scanning pattern}
+% \label{sec:completeness}
+
+% \figurename~\ref{fig:XX} (XX panel) shows the $V$-band extinction
+% in the region around the GD-1 stream, computed from the
+% Schlegel-Finkbeiner-Davis extinction map (\cite{Schlegel:1998}; hereafter SFD).
+
+% % Notebook:
+% \begin{figure}[h]
+% \begin{center}
+% \includegraphics[width=0.7\textwidth]{nvisits.pdf}
+% \end{center}
+% \caption{%
+% TODO
+% \label{fig:TODO}
+% }
+% \end{figure}
+
+
+\end{document}
