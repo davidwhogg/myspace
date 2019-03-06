@@ -84,7 +84,16 @@ release 2 (\citealt{Gaia-Collaboration:2018, Lindegren:2018}).
 \section{Methods}
 \label{sec:methods}
 
-
+\begin{equation}
+    v_i = v_{i, {\rm obs}} + A_{ij}\,x_j +
+        B_{ijk}\,x_j\,v_k + C_{ijk}\,x_j\,x_k +
+        D_{ijkm}\,x_j\,x_k\,v_m + F_{ijkm}\,x_j\,v_k\,v_m +
+        G_{ijkm}\,x_j\,x_k\,x_m +
+        ...
+\end{equation}
+where $C$ is symmetric in $j, k$, $D$ is symmetric in $j, k$, $F$ is symmetric
+in $k, m$, and $G$ is symmetric in $j, k, m$.
+I count: 9 + 27 + 18 + 54 + 54 + 30 parameters?
 
 \section{Results}
 \label{sec:results}
