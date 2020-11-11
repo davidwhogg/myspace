@@ -26,11 +26,11 @@ Install
 
 Requires Python >= 3.7.
 
-Clone this repo, change into the repo directory, and do:
+Clone this repo, change into the repo directory, and do::
 
     pip install -e .
 
-Or, install directly from GitHub:
+Or, install directly from GitHub::
 
     pip install git+https://github.com/adrn/myspace
 
