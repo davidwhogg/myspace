@@ -21,6 +21,19 @@ Projects
 - Find smooth position-dependent distortions of the velocity field that make
   chemical abundances most strongly predictive of velocity. Interpret *that*.
 
+Install
+-------
+
+Requires Python >= 3.7.
+
+Clone this repo, change into the repo directory, and do:
+
+    pip install -e .
+
+Or, install directly from GitHub:
+
+    pip install git+https://github.com/adrn/myspace
+
 License
 -------
 
