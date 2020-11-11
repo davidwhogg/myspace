@@ -74,7 +74,8 @@ class MySpace:
             # 'xvv': {'name': 'Fijlm', 'shape': (3, 3, 3, 3), 'symmetry': [2, 3]},
             # 'xxx': {'name': 'Gijlm', 'shape': (3, 3, 3, 3), 'symmetry': [1, 2, 3]},
         }
-        self._tensor_name_to_term = {v['name']: k for k, v in self._allowed_terms.items()}
+        self._tensor_name_to_term = {v['name']: k
+                                     for k, v in self._allowed_terms.items()}
 
         for k in self._allowed_terms:
             if 'symmetry' in self._allowed_terms[k]:
