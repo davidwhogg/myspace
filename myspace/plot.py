@@ -59,12 +59,12 @@ def make_hexplot(XX,VV,gs=100):
     #plt.show()
     plt.close()
 
-def make_animation(XX,VV,tensors,myspace,gs=150):
+def make_before_after_animations(XX,VV,tensors,myspace,gs=150):
     """
-    Make animation of X-Y, vx-vy, vx-vz, vy-vz in a series of wedges around the solar position
+    Make animations of X-Y, vx-vy, vx-vz, vy-vz in a series of wedges around the solar position beore and after transform
     Inputs: XX & VV are (N,3) position and velocity arrays
-            gs=number of bins per axis
-            tensors and myspace objects from MySpace
+    gs=number of bins per axis
+    tensors and myspace objects from MySpace
     """
     sr,sp,sz=coords.rect_to_cyl(XX[:,0], XX[:,1], XX[:,2])
     sp=sp+np.pi
@@ -80,7 +80,6 @@ def make_animation(XX,VV,tensors,myspace,gs=150):
                         
         f, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2, 2, figsize=(15,15))
         ax1.hist2d(XX[:,0][wedgedex],XX[:,1][wedgedex],range=[[-0.5,0.5],[-0.5,0.5]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
-        ##ax1.hist2d(XX[:,0][local_mask],XX[:,1][local_mask],range=[[-0.5,0.5],[-0.5,0.5]],bins=gs,cmin=1.0e-50,rasterized=True,density=True,cmap='gist_yarg')
         ax1.set_xlabel(r'$X\ (\mathrm{kpc})$',fontsize=20)
         ax1.set_ylabel(r'$Y\ (\mathrm{kpc})$',fontsize=20)
         ax1.set_xlim(-0.5,0.5)
@@ -105,14 +104,12 @@ def make_animation(XX,VV,tensors,myspace,gs=150):
         ax3.tick_params(axis='both', which='major', labelsize=15)
         ax4.tick_params(axis='both', which='major', labelsize=15)
         plt.savefig('Pre-transform'+str("{:02d}".format(i))+'.pdf',bbox_inches='tight')
-        #plt.show()
         plt.close()
     
         fix=myspace.get_model_v(tensors,VV[wedgedex],XX[wedgedex])
     
         f, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2, 2, figsize=(15,15))
         ax1.hist2d(XX[:,0][wedgedex],XX[:,1][wedgedex],range=[[-0.5,0.5],[-0.5,0.5]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
-        #ax1.hist2d(XX[:,0][local_mask],XX[:,1][local_mask],range=[[-0.5,0.5],[-0.5,0.5]],bins=gs,cmin=1.0e-50,rasterized=True,density=True,cmap='gist_yarg')
         ax1.set_xlabel(r'$X\ (\mathrm{kpc})$',fontsize=20)
         ax1.set_ylabel(r'$Y\ (\mathrm{kpc})$',fontsize=20)
         ax1.set_xlim(-0.5,0.5)
@@ -137,8 +134,64 @@ def make_animation(XX,VV,tensors,myspace,gs=150):
         ax3.tick_params(axis='both', which='major', labelsize=15)
         ax4.tick_params(axis='both', which='major', labelsize=15)
         plt.savefig('Post-transform'+str("{:02d}".format(i))+'.pdf',bbox_inches='tight')
-        #plt.show()
         plt.close()
 
     os.system('convert -delay 5 -loop 0 Post-transform*.pdf After-sfbil.gif')
     os.system('convert -delay 5 -loop 0 Pre-transform*.pdf Before-sfbil.gif')
+
+def make_corrections_animation(XX,VV,tensorsx,myspacex,tensorsxv,myspacexv,gs=150):
+    """
+    Make animation of X-Y & vx-vy in a series of wedges around the solar position for uncorrectd, x corrected and xv corrected velocity vectors
+    Inputs: XX & VV are (N,3) position and velocity arrays
+    gs=number of bins per axis
+    tensorsx and myspacex objects from MySpace with only 'x'
+    tensorsvx and myspace vx objects from MySpace with 'x' and 'xv'     
+    """
+    sr,sp,sz=bovy_coords.rect_to_cyl(XX[:,0], XX[:,1], XX[:,2])
+    sp=sp+np.pi
+    dist2=np.sqrt(XX[:,0]**2+XX[:,1]**2)
+    rindx=(dist2>0.2)*(dist2<.5)*(np.fabs(XX[:,2])<0.2)
+    for i in range(0,36):
+        wedgedex=rindx*(sp>(i*np.pi/18.))*(sp<((i+3)*np.pi/18.))
+        if i==34:
+            wedgedex=rindx*(sp>(i*np.pi/18.))*(sp<((i+3)*np.pi/18.))+rindx*(sp>0.)*(sp<((1)*np.pi/18.))
+        if i==35:
+            wedgedex=rindx*(sp>(i*np.pi/18.))*(sp<((i+3)*np.pi/18.))+rindx*(sp>0.)*(sp<((2)*np.pi/18.))
+        print(wedgedex.sum(),'stars in wedge',i)
+
+        fixx=myspacex.get_model_v(tensorsx,VV[wedgedex],XX[wedgedex])
+        fixxv=myspacexv.get_model_v(tensorsxv,VV[wedgedex],XX[wedgedex])
+
+        f, ((ax1,ax2),(ax3,ax4)) = plt.subplots(2, 2, figsize=(15,15))
+        ax1.hist2d(XX[:,0][wedgedex],XX[:,1][wedgedex],range=[[-0.5,0.5],[-0.5,0.5]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
+        ax1.set_xlabel(r'$X\ (\mathrm{kpc})$',fontsize=20)
+        ax1.set_ylabel(r'$Y\ (\mathrm{kpc})$',fontsize=20)
+        ax1.set_xlim(-0.5,0.5)
+        ax1.set_ylim(-0.5,0.5)
+        ax1.set_title(r'$\mathrm{Selected\ area}$',fontsize=20)
+        ax2.hist2d(VV[:,0][wedgedex],VV[:,1][wedgedex],range=[[-125,125],[-125,125]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
+        ax2.set_xlabel(r'$v_X\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax2.set_ylabel(r'$v_Y\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax2.set_xlim(-125,125)
+        ax2.set_ylim(-125,125)
+        ax2.set_title(r'$\mathrm{No\ correction}$',fontsize=20)
+        ax3.hist2d(fixx[:,0],fixx[:,1],range=[[-125,125],[-125,125]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
+        ax3.set_xlabel(r'$v_X\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax3.set_ylabel(r'$v_Y\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax3.set_xlim(-125,125)
+        ax3.set_ylim(-125,125)
+        ax3.set_title(r'$\mathrm{x\ correction}$',fontsize=20)
+        ax4.hist2d(fixxv[:,0],fixxv[:,1],range=[[-125,125],[-125,125]],bins=gs,cmin=1.0e-50,rasterized=True,density=True)
+        ax4.set_xlabel(r'$v_X\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax4.set_ylabel(r'$v_Y\ (\mathrm{km\ s}^{-1})$',fontsize=20)
+        ax4.set_xlim(-125,125)
+        ax4.set_ylim(-125,125)
+        ax4.set_title(r'$\mathrm{xv\ correction}$',fontsize=20)
+        ax1.tick_params(axis='both', which='major', labelsize=15)
+        ax2.tick_params(axis='both', which='major', labelsize=15)
+        ax3.tick_params(axis='both', which='major', labelsize=15)
+        ax4.tick_params(axis='both', which='major', labelsize=15)
+        plt.savefig('orders'+str("{:02d}".format(i))+'.pdf',bbox_inches='tight')
+        plt.close()
+
+    os.system('convert -delay 5 -loop 0 orders*.pdf orders.gif')
