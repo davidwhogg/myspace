@@ -15,26 +15,29 @@ from jax.ops import index_update
 
 
 class MySpace:
-    """Find the position-dependent transformation that makes a given set of velocities look most
-    like the reference distribution.
+    """Find the position-dependent transformation that makes a given set of
+    velocities look most like the reference distribution.
 
     Terminology
     -----------
-    We define the "reference distribution" to be the (fitted) Gaussian Mixture Model (GMM) of a
-    local (think: <100 pc or so) sample of stars. We define the "training set" to be a larger sample
-    of stars that are used to fit the parameters of the position- and velocity-dependent
-    transformation that maximizes the likelihood of a given set of velocities under the reference
+    We define the "reference distribution" to be the (fitted) Gaussian Mixture
+    Model (GMM) of a local (think: <100 pc or so) sample of stars. We define the
+    "training set" to be a larger sample of stars that are used to fit the
+    parameters of the position- and velocity-dependent transformation that
+    maximizes the likelihood of a given set of velocities under the reference
     distribution.
 
     Parameters
     ----------
     gmm : `~sklearn.mixture.GaussianMixture`
-        A Gaussian Mixture Model fitted to the velocity distribution of a local sample of stars.
-        This distribution is treated as the reference velocity distribution.
+        A Gaussian Mixture Model fitted to the velocity distribution of a local
+        sample of stars. This distribution is treated as the reference velocity
+        distribution.
     terms : `list`
-        A list of strings specifying which terms to use in the transformation. By default, this is
-        just `['x']`, meaning linear order in :math:`x`. However, this list could include terms like
-        `'xv'` and `'xx'`, and (soon) even higher order terms like `'xxv'` and etc. So, for example,
+        A list of strings specifying which terms to use in the transformation.
+        By default, this is just `['x']`, meaning linear order in :math:`x`.
+        However, this list could include terms like `'xv'` and `'xx'`, and
+        (soon) even higher order terms like `'xxv'` and etc. So, for example,
         you could pass `terms=['x', 'xv', 'xx']`.
 
     Implementation notes
