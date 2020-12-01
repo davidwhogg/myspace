@@ -241,8 +241,14 @@ class MySpace:
         arg_nk = (-0.5 * (self._log_const_k[None] + quad_nk) +
                   jnp.log(self.w_k)[None])
         scalar = jsp.special.logsumexp(arg_nk, axis=1)
+        scalar = -jnp.sum(scalar, axis=0) / scalar.shape[0]
 
-        return -jnp.sum(scalar, axis=0) / scalar.shape[0]
+        # HACK:
+        for k in range(3):
+            scalar += (jnp.linalg.det(tensors['Bijl'][k]) - 1) ** 2
+            scalar += (1 / jnp.linalg.det(tensors['Bijl'][k]) - 1) ** 2
+
+        return scalar
 
     objective_and_grad = value_and_grad(objective, argnums=1)
 
