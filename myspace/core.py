@@ -226,7 +226,7 @@ class MySpace:
         """
 
         tensors = self._unpack_p(p, jax=True)
-        vv_ni = self.get_model_v(tensors, v_ni, x_ni)
+        vv_ni = self.get_model_v(v_ni, x_ni, tensors=tensors)
         delta_nki = vv_ni[:, None] - self.mu_ki[None]  # (N, K, 3)
 
         # quadratic form
