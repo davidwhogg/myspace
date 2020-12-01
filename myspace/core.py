@@ -56,7 +56,8 @@ class MySpace:
         self.K = gmm.n_components
         self.dim = gmm.n_features_in_
 
-        # Unpack the input GMM instance to have faster access to these quantities:
+        # Unpack the input GMM instance to have faster access to these
+        # quantities:
         self.w_k = gmm.weights_  # (K, )
         self.mu_ki = gmm.means_  # (K, dim)
         self.C_kij = gmm.covariances_  # (K, dim, dim)
@@ -68,11 +69,13 @@ class MySpace:
             [np.linalg.slogdet(C)[1] + self.dim * np.log(2*np.pi)
              for C in self.C_kij])
 
-        # Parse and validate the specified / desired 'terms' to use in the expansion:
+        # Parse and validate the specified / desired 'terms' to use in the
+        # expansion:
         self._allowed_terms = {
             'x': {'name': 'Aij', 'shape': (self.dim, self.dim)},
             'xv': {'name': 'Bijl', 'shape': (self.dim, self.dim, self.dim)},
-            'xx': {'name': 'Cijl', 'shape': (self.dim, self.dim, self.dim), 'symmetry': [1, 2]},
+            'xx': {'name': 'Cijl', 'shape': (self.dim, self.dim, self.dim),
+                   'symmetry': [1, 2]},
             # 'xxv': {'name': 'Dijlm', 'shape': (3, 3, 3, 3), 'symmetry': [1, 2]},
             # 'xvv': {'name': 'Fijlm', 'shape': (3, 3, 3, 3), 'symmetry': [2, 3]},
             # 'xxx': {'name': 'Gijlm', 'shape': (3, 3, 3, 3), 'symmetry': [1, 2, 3]},
@@ -82,11 +85,13 @@ class MySpace:
 
         for k in self._allowed_terms:
             if 'symmetry' in self._allowed_terms[k]:
-                # TODO: this only supports single symmetry currently! So, for example, the 'xxx'
-                # symmetry is not yet supported
-                self._allowed_terms[k]['size'] = int(self.dim**(self.dim-1) * (self.dim+1) / 2)
+                # TODO: this only supports single symmetry currently! So, for
+                # example, the 'xxx' symmetry is not yet supported
+                self._allowed_terms[k]['size'] = int(self.dim**(self.dim-1) *
+                                                     (self.dim+1) / 2)
             else:
-                self._allowed_terms[k]['size'] = np.prod(self._allowed_terms[k]['shape'])
+                self._allowed_terms[k]['size'] = np.prod(
+                    self._allowed_terms[k]['shape'])
 
         self._p_size = 0
         for term in terms:
@@ -96,6 +101,7 @@ class MySpace:
             self._p_size += self._allowed_terms[term]['size']
 
         self.terms = terms
+        self.tensors = None
 
     def _unpack_p(self, p, jax=False):
         """Unpack the parameter array into the individual tensors"""
@@ -105,20 +111,22 @@ class MySpace:
         else:
             xnp = np
 
-        # TODO: these if blocks below should be automated...this means that this class currently
-        # only works for the terms listed below!
+        # TODO: these if blocks below should be automated...this means that this
+        # class currently only works for the terms listed below!
         unpacked = {}
 
         i1 = 0
 
         if 'x' in self.terms:
             meta = self._allowed_terms['x']
-            unpacked[meta['name']] = xnp.array(p[i1:i1 + meta['size']]).reshape(meta['shape'])
+            unpacked[meta['name']] = xnp.array(
+                p[i1:i1 + meta['size']]).reshape(meta['shape'])
             i1 += meta['size']
 
         if 'xv' in self.terms:
             meta = self._allowed_terms['xv']
-            unpacked[meta['name']] = xnp.array(p[i1:i1 + meta['size']]).reshape(meta['shape'])
+            unpacked[meta['name']] = xnp.array(
+                p[i1:i1 + meta['size']]).reshape(meta['shape'])
             i1 += meta['size']
 
         if 'xx' in self.terms:
@@ -141,25 +149,31 @@ class MySpace:
 
         return unpacked
 
-    def get_model_v(self, tensors, v_ni, x_ni):
-        """Compute the 'transformed' or 'adjusted' velocities given a dictionary of tensors and a
-        set of positions and velocities.
+    def get_model_v(self, v_ni, x_ni, tensors=None):
+        """Compute the 'transformed' or 'adjusted' velocities given a dictionary
+        of tensors and a set of positions and velocities.
 
         Parameters
         ----------
         tensors : dict
-            A dictionary mapping from tensor name, e.g., `'Aij'`, to the actual tensor data as numpy
-            arrays.
+            A dictionary mapping from tensor name, e.g., `'Aij'`, to the actual
+            tensor data as numpy arrays.
         v_ni : array_like
             The velocity data to transform.
         x_ni : array_like
-            The corresponding position data, used to compute the transformed velocities.
+            The corresponding position data, used to compute the transformed
+            velocities.
 
         Returns
         -------
         model_v : JAX array
             Effectively a numpy array containing the transformed velocity data.
         """
+
+        if tensors is None:
+            if self.tensors is None:
+                raise ValueError('MySpace does not have cached tensors! Did '
+                                 'you run .fit() yet, or did it fail?')
 
         # Used below to map from term components (like x or v) to the vector data:
         xv_data = {'x': jnp.array(x_ni), 'v': jnp.array(v_ni)}
@@ -187,12 +201,14 @@ class MySpace:
     def objective(self, p, v_ni, x_ni):
         """Compute the objective function given a parameter array.
 
-        The parameter array is effectively a concatenated set of unraveled tensors, so it has a
-        shape set by the sum of the number of (independent) components in each of the tensors used
-        in this instance's transformation.
+        The parameter array is effectively a concatenated set of unraveled
+        tensors, so it has a shape set by the sum of the number of (independent)
+        components in each of the tensors used in this instance's
+        transformation.
 
-        The objective function here is the negative log-likelihood of the transformed velocities
-        computed with the fitted GMM of the reference distribution.
+        The objective function here is the negative log-likelihood of the
+        transformed velocities computed with the fitted GMM of the reference
+        distribution.
 
         Parameters
         ----------
@@ -216,10 +232,12 @@ class MySpace:
         # quadratic form
         # delta_nki : (N, K, 3)
         # Cinv_kij : (K, 3, 3)
-        quad_nk = jnp.einsum('nki,kij,nkj->nk', delta_nki, self.Cinv_kij, delta_nki)
+        quad_nk = jnp.einsum('nki,kij,nkj->nk',
+                             delta_nki, self.Cinv_kij, delta_nki)
 
         # scalar : (N, )
-        arg_nk = -0.5 * (self._log_const_k[None] + quad_nk) + jnp.log(self.w_k)[None]
+        arg_nk = (-0.5 * (self._log_const_k[None] + quad_nk) +
+                  jnp.log(self.w_k)[None])
         scalar = jsp.special.logsumexp(arg_nk, axis=1)
 
         return -jnp.sum(scalar, axis=0) / scalar.shape[0]
@@ -239,10 +257,10 @@ class MySpace:
                        args=(train_v, train_x))
 
         if res.success:
-            tensors = self._unpack_p(res.x)
+            self.tensors = self._unpack_p(res.x)
         else:
             warnings.warn("WARNING: failed to fit.",
                           category=RuntimeWarning)
-            tensors = None
+            self.tensors = None
 
-        return res, tensors
+        return res, self.tensors
