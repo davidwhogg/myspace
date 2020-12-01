@@ -175,6 +175,8 @@ class MySpace:
                 raise ValueError('MySpace does not have cached tensors! Did '
                                  'you run .fit() yet, or did it fail?')
 
+            tensors = self.tensors
+
         # Used below to map from term components (like x or v) to the vector data:
         xv_data = {'x': jnp.array(x_ni), 'v': jnp.array(v_ni)}
 
