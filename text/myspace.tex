@@ -65,6 +65,9 @@
 \section{Methods}
 \label{sec:methods}
 
+Every star has an observed 3-vector velocity $\vec{v}$ and an observed
+3-vector position $\vec{x}$.
+We transform to a new transformed velocity $\vec{v}'$ according to
 \begin{equation}
   \vec{v}' = \vec{v} + \mat{A}\cdot\vec{x} + \mat{B}(\vec{x})\cdot\vec{v} + \mbox{terms}
   ~,
@@ -106,6 +109,9 @@ In case you have ``forgotten'', matrix exponentiation can be defined as
 \end{equation}
 or you can just use \code{scipy.linalg.expm()} and avoid thinking about it.
 
+Our objective is the log probability of the suburbs stars given then
+GMM fit to the city stars. Say lots more about all that.
+
 We previously imagined doing this:
 \begin{equation}
     v_i = v_{i, {\rm obs}} + A_{ij}\,x_j +
@@ -119,6 +125,7 @@ in $l, m$, and $G$ is symmetric in $j, l, m$.
 I count: 9 + 27 + 18 + 54 + 54 + 30 parameters?
 But this is perhaps unstable, because the transformation can collapse the
 velocity distribution into a tiny space.
+
 
 \section{Results}
 \label{sec:results}
