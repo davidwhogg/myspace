@@ -83,7 +83,7 @@ class MySpace:
         }
         self._tensor_name_to_term = {v['name']: k
                                      for k, v in self._allowed_terms.items()}
-        self._Ms = [ # THE HORROR
+        self._Ms = np.array([ # THE HORROR
             [[0, 1, 0], [-1, 0, 0], [0, 0, 0]],
             [[0, 0, -1], [0, 0, 0], [1, 0, 0]],
             [[0, 0, 0], [0, 0, 1], [0, -1, 0]],
@@ -91,7 +91,7 @@ class MySpace:
             [[-1, 0, 0], [0, 0, 0], [0, 0, 1]],
             [[0, 1, 0], [1, 0, 0], [0, 0, 0]],
             [[0, 0, 1], [0, 0, 0], [1, 0, 0]],
-            [[0, 0, 0], [0, 0, 1], [0, 1, 0]]]
+            [[0, 0, 0], [0, 0, 1], [0, 1, 0]]])
 
         for k in self._allowed_terms:
             if 'symmetry' in self._allowed_terms[k]:
@@ -142,7 +142,7 @@ class MySpace:
             i1 += meta['size']
             unpacked[meta['name']] = xnp.array(
                 [expm(xnp.dot(xnp.dot(uvecs, x),
-                              xnp.reshape(self._Ms, (8, 9))).reshape(3, 3))
+                              self._Ms.reshape(8, 9)).reshape(3, 3))
                  for x in xs])
 
         if 'xx' in self.terms:
