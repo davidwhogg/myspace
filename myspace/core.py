@@ -74,7 +74,7 @@ class MySpace:
         # expansion:
         self._allowed_terms = {
             'x': {'name': 'Aij', 'shape': (self.dim, self.dim)},
-            'xv': {'name': 'B(x)ik', 'shape': (self.dim, self.dim)},
+            'xv': {'name': 'B(x)ik', 'shape': (8, self.dim)}, # HACK MAGIC 8-ball
             'xx': {'name': 'Cijl', 'shape': (self.dim, self.dim, self.dim),
                    'symmetry': [1, 2]},
             # 'xxv': {'name': 'Dijlm', 'shape': (3, 3, 3, 3), 'symmetry': [1, 2]},
@@ -137,9 +137,8 @@ class MySpace:
 
         if 'xv' in self.terms:
             meta = self._allowed_terms['xv']
-            meta['size'] = 24 # HACK: APOLOGIES TO APW
             uvecs = xnp.array(
-                p[i1:i1 + meta['size']]).reshape((8,3))
+                p[i1:i1 + meta['size']]).reshape(meta['shape'])
             i1 += meta['size']
             unpacked[meta['name']] = xnp.array(
                 [expm(xnp.dot(xnp.dot(uvecs, x),
