@@ -1,16 +1,14 @@
 % This file is part of the myspace project.
-% Copyright 2019 the authors. All rights reserved.
+% Copyright 2019, 2020 the authors. All rights reserved.
 
 % TODO:
 % -
 
 \documentclass[modern]{aastex62}
-
-\usepackage{amsmath}
+\input{preamble}
 
 % typography
 \setlength{\parindent}{1.\baselineskip}
-\input{preamble}
 
 % aastex parameters
 % \received{not yet; THIS IS A DRAFT}
@@ -68,6 +66,48 @@
 \label{sec:methods}
 
 \begin{equation}
+  \vec{v}' = \vec{v} + \mat{A}\cdot\vec{x} + \mat{B}(\vec{x})\cdot\vec{v} + \mbox{terms}
+  ~,
+\end{equation}
+where
+$\mat{A}$ is an arbitrary $3\times 3$ tensor and
+$\mat{B}(\vec{x})$ is a position-dependent, unit-determinant $3\times 3$ tensor
+of the following form:
+\begin{equation}
+  B(\vec{x}) = \exp\left(\sum_{k=1}^8 (\vec{u}_k^\top\cdot\vec{x})\,\mat{M}_k\right)
+  ~,
+\end{equation}
+where
+the exponentiation is \emph{matrix} exponentiation,
+the 8 3-vectors $\vec{u}_k$ are free parameters,
+and the 8 matrices $\mat{M}_k$ are the following traceless rotation and shear generators (or any 8 independent linear combinations thereof):
+\begin{equation}
+  \begin{bmatrix} 0 & 1 & 0 \\ -1 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+  \begin{bmatrix} 0 & 0 & -1 \\ 0 & 0 & 0 \\ 1 & 0 & 0 \end{bmatrix}
+  \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & -1 & 0 \end{bmatrix}
+\end{equation}
+\begin{equation}
+  \begin{bmatrix} 1 & 0 & 0 \\ 0 & -1 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+  \begin{bmatrix} -1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+  \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{bmatrix}
+  \begin{bmatrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ 1 & 0 & 0 \end{bmatrix}
+  \begin{bmatrix} 0 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}
+\end{equation}
+This model has 9 free parameters in $\mat{A}$ and 24 total across
+the 8 vectors $\vec{u}_k$, making for 33 free parameters in total.
+
+In case you have ``forgotten'', matrix exponentiation can be defined as
+\begin{equation}
+  \exp(\mat{Q}) = I + \mat{Q} + \frac{1}{2!}\,\mat{Q}\cdot\mat{Q}
+  + \frac{1}{3!}\,\mat{Q}\cdot\mat{Q}\cdot\mat{Q}
+  + \frac{1}{4!}\,\mat{Q}\cdot\mat{Q}\cdot\mat{Q}\cdot\mat{Q}
+  + \cdots
+  ~,
+\end{equation}
+or you can just use \code{scipy.linalg.expm()} and avoid thinking about it.
+
+We previously imagined doing this:
+\begin{equation}
     v_i = v_{i, {\rm obs}} + A_{ij}\,x_j +
         B_{ijl}\,x_j\,v_l + C_{ijl}\,x_j\,x_l +
         D_{ijlm}\,x_j\,x_l\,v_m + F_{ijlm}\,x_j\,v_l\,v_m +
@@ -77,6 +117,8 @@
 where $C$ is symmetric in $j, l$, $D$ is symmetric in $j, l$, $F$ is symmetric
 in $l, m$, and $G$ is symmetric in $j, l, m$.
 I count: 9 + 27 + 18 + 54 + 54 + 30 parameters?
+But this is perhaps unstable, because the transformation can collapse the
+velocity distribution into a tiny space.
 
 \section{Results}
 \label{sec:results}

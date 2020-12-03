@@ -1,8 +1,6 @@
 % Load common packages
 % \usepackage{microtype}  % ALWAYS!
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
+\usepackage{amsmath, bm, mathrsfs, amssymb, amsfonts}
 \usepackage{booktabs}
 
 \usepackage{graphicx}
@@ -28,6 +26,7 @@
 \newcommand{\github}{\package{GitHub}}
 \newcommand{\python}{\package{Python}}
 \newcommand{\emcee}{\package{emcee}}
+\newcommand{\code}[1]{\texttt{#1}}
 
 % Missions
 \newcommand{\project}[1]{\textsl{#1}}
@@ -45,10 +44,18 @@
 
 % Maths
 \newcommand{\dd}{\mathrm{d}}
-\newcommand{\transpose}[1]{{#1}^{\mathsf{T}}}
 \newcommand{\inverse}[1]{{#1}^{-1}}
 \newcommand{\argmin}{\operatornamewithlimits{argmin}}
 \newcommand{\mean}[1]{\left< #1 \right>}
+\newcommand{\T}{^{\!\mathsf{T}\!}}
+\newcommand{\transpose}[1]{{#1}\T}
+\newcommand{\inv}{^{-1}}
+\newcommand{\scalar}[1]{#1}
+\renewcommand{\vector}[1]{\boldsymbol{#1}}
+\renewcommand{\vec}[1]{\vector{#1}}
+\renewcommand{\tensor}[1]{\mathbf{#1}}
+\renewcommand{\matrix}[1]{\mathsf{#1}}
+\newcommand{\mat}[1]{\matrix{#1}}
 
 % Unit shortcuts
 \newcommand{\msun}{\ensuremath{\mathrm{M}_\odot}}
