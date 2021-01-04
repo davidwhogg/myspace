@@ -14,7 +14,6 @@ import jax.numpy as jnp
 import jax.scipy as jsp
 from jax.ops import index_update
 
-
 class MySpace:
     """Find the position-dependent transformation that makes a given set of
     velocities look most like the reference distribution.
@@ -118,10 +117,8 @@ class MySpace:
 
         if jax:
             xnp = jnp
-            expm = jsp.linalg.expm
         else:
             xnp = np
-            expm = sp.linalg.expm
 
         # TODO: these if blocks below should be automated...this means that this
         # class currently only works for the terms listed below!
@@ -141,8 +138,8 @@ class MySpace:
                 p[i1:i1 + meta['size']]).reshape(meta['shape'])
             i1 += meta['size']
             unpacked[meta['name']] = xnp.array(
-                [expm(xnp.dot(xnp.dot(uvecs, x),
-                              self._Ms.reshape(8, 9)).reshape(3, 3))
+                [xnp.eye(3) + xnp.dot(xnp.dot(uvecs, x),
+                                      self._Ms.reshape(8, 9)).reshape(3, 3)
                  for x in xs])
 
         if 'xx' in self.terms:
